@@ -2,7 +2,7 @@
 # Vehicle class object 
 class Vehicle(object):
     
-    def _init_(self, id, serviceType, status, location, model, color):
+    def _init_(self, id, serviceType, status, location):
         self.id = id
         self.ServicType = servicType
         self.status = status
