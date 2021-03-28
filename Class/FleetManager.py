@@ -1,5 +1,5 @@
 # # FleetManager class
-class Customer:
+class FleetManager:
     def __init__(self, email, first_name=None, last_name=None, password=None):
         self.first_name = first_name
         self.last_name = last_name
