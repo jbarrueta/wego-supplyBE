@@ -4,7 +4,7 @@ class Vehicle(object):
     
     def _init_(self, vehicleID, serviceType, vehicleStatus, licensePlate, currentLatitude, currentLongitude, vehicleModel, fleetID):
         self.vehicleID = vehicleID
-        self.ServiceType = serviceType
+        self.serviceType = serviceType
         self.status = vehicleStatus
         self.licensePlate = licensePlate
         self.currentLatitude = currentLatitude
@@ -13,8 +13,8 @@ class Vehicle(object):
         self.fleetID = fleetID
         
 
-def getId(self):
-    return self.id = id 
+def getVehicleID(self):
+    return self.vehicleID = vehicleID
 
 def getServiceType(self):
     return self.serviceType = ServiceType
@@ -37,4 +37,6 @@ def getVehicleModel(self):
 def getFleetID(self):
     return self.fleetID = fleetID
 
+def get_register_data(self):
+    return self.__dict__
 

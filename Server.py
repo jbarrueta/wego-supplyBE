@@ -110,14 +110,14 @@ class TaasAppService(BaseHTTPRequestHandler):
                                 password=postBody["password"])
             email, password = FleetManager.get_login_data()
 
-            # attempting to find user credentials with DB with method in Controllers.CustomerController
+            # attempting to find user credentials with DB with method in Controllers.FleetManagerController
             responseBody = loginUser(email, password)
 
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
-        elif path == '/registerVehicle':
-            vehicle = Vehicle(postBody[''])
+        elif path == '/vehicle/add':
+            vehicle = Vehicle(postBody[""])
 
 
 
