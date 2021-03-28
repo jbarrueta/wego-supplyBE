@@ -99,8 +99,8 @@ class TaasAppService(BaseHTTPRequestHandler):
                                 last_name=postBody['lastName'], password=postBody['password'])
             fleetManagerDict = fleetManager.get_register_data()
 
-            # attempting to add user into DB with Controllers.VehicleController
-            responseBody = registerUser(customerDict)
+            # attempting to add user into DB with Controllers.FleetManagerController
+            responseBody = registerUser(fleetManagerDict)
 
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
@@ -115,9 +115,22 @@ class TaasAppService(BaseHTTPRequestHandler):
 
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
-
+        
         elif path == '/vehicle/add':
-            vehicle = Vehicle(postBody[""])
+            vehicleAdd = Vehicle(postBody["fleetID"],
+                                vehicle_model=postBody["vehicleModel"],
+                                license_plate=postBody["licensePlate"])
+            vehicleDict = vehicleAdd.get_register_data()
+            # attempting to add user into DB with controllers.VehicleController
+            responseBody = registerVehice(vehicleDict)
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+                    
+
+
+        # elif path == '/vehicle/req':
+        #     vehicle = Vehicle(postBody["orderID"],
+        #                 service_type=postBody['serviceType'],
+        #                 destination=postBody['destination']
 
 
 

@@ -7,7 +7,7 @@ def registerUser(fleetManagerData):
         # 2. Open a new database connection
         client = mongoConnect()
         # 3. write data from the database
-        db = client.team12_demand
+        db = client.team12_supply #check
         FleetManager = db.FleetManager
         if (fleetManager.count_documents({'email': fleetManagerData['email']}) == 0):
             fleetManagerObj = fleetManagerData

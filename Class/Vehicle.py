@@ -5,7 +5,7 @@ class Vehicle(object):
     def _init_(self, vehicleID, serviceType, vehicleStatus, licensePlate, currentLatitude, currentLongitude, vehicleModel, fleetID):
         self.vehicleID = vehicleID
         self.serviceType = serviceType
-        self.status = vehicleStatus
+        self.vehicleStatus = vehicleStatus
         self.licensePlate = licensePlate
         self.currentLatitude = currentLatitude
         self.currentLongitude = currentLongitude
