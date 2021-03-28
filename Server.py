@@ -5,6 +5,8 @@ from http import HTTPStatus
 from urllib.parse import urlparse, parse_qs
 from classes.FleetManager import FleetManager
 from controllers.FleetManagerController import registerUser, loginUser
+from classes.Vehicle import Vehicle
+from Controllers.VehicleController import registerVehicle
 
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
 # specifying a log file if you want to see a stream of log data in one file.
@@ -60,6 +62,9 @@ class TaasAppService(BaseHTTPRequestHandler):
         if path == '/':
             status = self.HTTP_STATUS_RESPONSE_CODES['OK'].value
             responseBody['data'] = 'Hello world'
+
+        elif path == '/vehicles':
+
 
         # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator
         # in Python here to match the string prefix of a URL, which comes in handy when our request URL's have GET
@@ -117,12 +122,12 @@ class TaasAppService(BaseHTTPRequestHandler):
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
         
         elif path == '/vehicle/add':
-            vehicleAdd = Vehicle(postBody["fleetID"],
-                                vehicle_model=postBody["vehicleModel"],
-                                license_plate=postBody["licensePlate"])
+            vehicleAdd = Vehicle(postBody['fleetID'],
+                                vehicle_model=postBody['vehicleModel'],
+                                license_plate=postBody['licensePlate'])
             vehicleDict = vehicleAdd.get_register_data()
             # attempting to add user into DB with controllers.VehicleController
-            #responseBody = registerVehice(vehicleDict)
+            responseBody = registerVehice(vehicleDict)
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
                     
         # elif path == '/vehicle/req':
