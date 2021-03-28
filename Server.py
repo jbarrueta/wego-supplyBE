@@ -106,15 +106,20 @@ class TaasAppService(BaseHTTPRequestHandler):
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
         elif path == '/login':
-            customer = Customer(postBody["email"],
+            customer = FleetManager(postBody["email"],
                                 password=postBody["password"])
-            email, password = customer.get_login_data()
+            email, password = FleetManager.get_login_data()
 
             # attempting to find user credentials with DB with method in Controllers.CustomerController
             responseBody = loginUser(email, password)
 
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+
+        elif path == '/registerVehicle':
+            vehicle = Vehicle(postBody[''])
+
+
 
         self.send_response(status)
         self.send_header("Content-type", "text/html")
