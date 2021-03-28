@@ -97,7 +97,7 @@ class TaasAppService(BaseHTTPRequestHandler):
             # 1. Access POST parameters using your postBody
             fleetManager = FleetManager(postBody['email'], first_name=postBody['firstName'],
                                 last_name=postBody['lastName'], password=postBody['password'])
-            flettManagerDict = fleetManager.get_register_data()
+            fleetManagerDict = fleetManager.get_register_data()
 
             # attempting to add user into DB with Controllers.VehicleController
             responseBody = registerUser(customerDict)
