@@ -122,11 +122,9 @@ class TaasAppService(BaseHTTPRequestHandler):
                                 license_plate=postBody["licensePlate"])
             vehicleDict = vehicleAdd.get_register_data()
             # attempting to add user into DB with controllers.VehicleController
-            responseBody = registerVehice(vehicleDict)
+            #responseBody = registerVehice(vehicleDict)
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
                     
-
-
         # elif path == '/vehicle/req':
         #     vehicle = Vehicle(postBody["orderID"],
         #                 service_type=postBody['serviceType'],
