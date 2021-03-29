@@ -1,4 +1,4 @@
-from config.mongoConnect import mongoConnect
+from mongo.mongoConfig import mongoConnect
 import bcrypt
 
 def registerUser(fleetManagerData):

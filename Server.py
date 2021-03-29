@@ -1,11 +1,12 @@
 import logging
 import json
+from urllib.parse import urlparse, parse_qs
+from utils.mapboxUtils import mapboxUtils
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http import HTTPStatus
 from urllib.parse import urlparse, parse_qs
-from classes.FleetManager import FleetManager
-from controllers.FleetManagerController import registerUser, loginUser
-from classes.Vehicle import Vehicle
+from Class.FleetManager import FleetManager
+from Class.Vehicle import Vehicle
 from Controllers.VehicleController import registerVehicle
 
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
@@ -62,8 +63,11 @@ class TaasAppService(BaseHTTPRequestHandler):
         if path == '/':
             status = self.HTTP_STATUS_RESPONSE_CODES['OK'].value
             responseBody['data'] = 'Hello world'
-
-        elif path == '/vehicles':
+        
+        elif path == '/vehicles/req':
+            o = urlparse(path)
+            # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type="pet2vet"&order_id=1&customer_id="KG2342"&destination="3001 S. Congress"
+            orderParams = parse_qs(o.query)
 
 
         # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator
@@ -121,20 +125,20 @@ class TaasAppService(BaseHTTPRequestHandler):
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
         
-        elif path == '/vehicle/add':
+        elif path == '/vehicles/add':
             vehicleAdd = Vehicle(postBody['fleetID'],
-                                vehicle_model=postBody['vehicleModel'],
-                                license_plate=postBody['licensePlate'])
+                                postBody['vehicleModel'],
+                                postBody['licensePlate'],
+                                postBody['vehicleStatus'],
+                                postBody['id'],
+                                postBody['serviceType']
+                                )
             vehicleDict = vehicleAdd.get_register_data()
             # attempting to add user into DB with controllers.VehicleController
-            responseBody = registerVehice(vehicleDict)
+            responseBody = registerVehicle(vehicleDict)
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
                     
-        # elif path == '/vehicle/req':
-        #     vehicle = Vehicle(postBody["orderID"],
-        #                 service_type=postBody['serviceType'],
-        #                 destination=postBody['destination']
-
+         
 
 
         self.send_response(status)

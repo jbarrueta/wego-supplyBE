@@ -1,42 +1,34 @@
 
 # Vehicle class object 
-class Vehicle(object):
-    
-    def _init_(self, vehicleID, serviceType, vehicleStatus, licensePlate, currentLatitude, currentLongitude, vehicleModel, fleetID):
-        self.vehicleID = vehicleID
-        self.serviceType = serviceType
-        self.vehicleStatus = vehicleStatus
-        self.licensePlate = licensePlate
-        self.currentLatitude = currentLatitude
-        self.currentLongitude = currentLongitude
-        self.vehicleModel = vehicleModel
-        self.fleetID = fleetID
+class Vehicle:
+    def __init__(self, fleet_id, vehicle_model, license_plate, vehicle_status, id, service_type ):
+        self.fleet_id = fleet_id
+        self.vehicle_status = vehicle_status
+        self.license_plate = license_plate
+        self.vehicle_model = vehicle_model
+        self.id = id
+        self.service_type = service_type
+        
         
 
-def getVehicleID(self):
-    return self.vehicleID = vehicleID
+    def getID(self):
+        return self.id
 
-def getServiceType(self):
-    return self.serviceType = ServiceType
+    def getServiceType(self):
+        return self.service_type
 
-def getVehicleStatus(self):
-    return self.vehicleStatus = vehicleStatus
+    def getVehicleStatus(self):
+        return self.vehicle_status
 
-def getLicensePlate(self):
-    return self.licensePlate = licensePlate
+    def getLicensePlate(self):
+        return self.license_plate
 
-def getcurrentLatitude(self):
-    return self.currentLatitude = currentLatitude
+    def getVehicleModel(self):
+        return self.vehicle_model
 
-def getcurrentLongitude(self):
-    return self.currentLongitude = currentLongitude
+    def getFleetID(self):
+        return self.fleet_id
 
-def getVehicleModel(self):
-    return self.vehicleModel = vehicleModel
-
-def getFleetID(self):
-    return self.fleetID = fleetID
-
-def get_register_data(self):
-    return self.__dict__
+    def get_register_data(self):
+        return self.__dict__
 

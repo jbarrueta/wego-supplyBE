@@ -31,4 +31,4 @@ class FleetManager:
         return self.__dict__
     
     def get_login_data(self):
-        return self.email, self.password class
+        return self.email, self.password

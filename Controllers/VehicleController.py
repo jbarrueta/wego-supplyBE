@@ -1,7 +1,8 @@
-from config.mongoConnect import mongoConnect
-import bcrypt
+from mongo.mongoConfig import mongoConnect
+import logging
 
-def registerVehicle(addedVehicleData):
+
+def registerVehicle(vehicleObj):
     response = {}
     try:
         # 2. Open a new database connection
@@ -9,14 +10,13 @@ def registerVehicle(addedVehicleData):
         # 3. write data from the database
         db = client.team12_supply #check
         vehicle = db.vehicle
-        if (vehicle.count_documents({'fleetID': addedVehicleData['fleetID']}) == 0):
-            vehicleObj = addedVehicleData
-           # vehicleObj['password'] = hashPassword(fleetManagerData['password'])
-            vehicleAddID = Vehicle.insert_one(vehicleObj).inserted_id
-            response = {'status': 'OK', 'data': {'fleetID': vehicleObj['fleetID'], 'vehicleModel': fleetManagerObj['vehicle_model'], 'licensePlate': fleetManagerObj['license_plate'], "id": vehicleAddID}}
+        if (vehicle.count_documents({'id': vehicleObj['id']}) == 0):
+            vehicleID = vehicle.insert_one(vehicleObj).inserted_id
+            response = {'status': 'OK', 'data': {'fleet_id': vehicleObj['fleet_id'], 'vehicle_model': vehicleObj['vehicle_model'], 'license_plate': vehicleObj['license_plate'], 'vehicle_status': vehicleObj['vehicle_status'], 'service_type':vehicleObj['service_type'], 'id': vehicleID}}
         else:
             response = {'status': 'CONFLICT', 'data': {'msg': 'already registered'}}
         # TODO: create session now
     except Exception as err:
+        logging.error(err)
         response = {'status': 'INTERNAL_SERVER_ERROR', 'data': {'msg': 'Server stopped working, please try again later'}}
     return response
