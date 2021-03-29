@@ -1,7 +1,7 @@
 import logging
 import json
+from utils.mapboxUtils import getCoordinates, getRoute
 from urllib.parse import urlparse, parse_qs
-from utils.mapboxUtils import mapboxUtils
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http import HTTPStatus
 from urllib.parse import urlparse, parse_qs
@@ -64,10 +64,25 @@ class TaasAppService(BaseHTTPRequestHandler):
             status = self.HTTP_STATUS_RESPONSE_CODES['OK'].value
             responseBody['data'] = 'Hello world'
         
-        elif path == '/vehicles/req':
+        elif '/vehicles/req' in path:
             o = urlparse(path)
             # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type="pet2vet"&order_id=1&customer_id="KG2342"&destination="3001 S. Congress"
             orderParams = parse_qs(o.query)
+            print(orderParams)
+            orderCoords = getCoordinates(orderParams['destination'][0])
+            print(orderCoords)
+            # hard coding vehicle selection
+            # TODO: find available vehicle
+            vehicle = Vehicle(2, "Toyota","KG7283", "available", 1, "pet2vet")
+            # Sending getRoute, the above vehicle location (vehicle is hard coded to St. Edwards Lng, Lat) and destination
+            route = getRoute(-97.757134, 30.2321, orderCoords[0], orderCoords[1])
+            responseBody = {'status': 'OK', 'data':{
+                            'ETA':'10', 
+                            'route': route,
+                            'vehicle_id': vehicle.getID
+            }}
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+                        
 
 
         # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator
