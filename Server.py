@@ -4,10 +4,11 @@ from utils.mapboxUtils import getCoordinates, getRoute
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http import HTTPStatus
-from urllib.parse import urlparse, parse_qs
-from Class.FleetManager import FleetManager
-from Class.Vehicle import Vehicle
-from Controllers.VehicleController import registerVehicle
+from urllib.parse import urlparse, parse_qsl
+from classes.fleetManager import FleetManager
+from classes.vehicle import Vehicle
+from controllers.vehicle import registerVehicle
+from controllers.fleetManager import registerUser, loginUser 
 
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
 # specifying a log file if you want to see a stream of log data in one file.
@@ -30,7 +31,7 @@ class TaasAppService(BaseHTTPRequestHandler):
     def extract_GET_parameters(self):
         path = self.path
         parsedPath = urlparse(path)
-        paramsDict = parse_qs(parsedPath.query)
+        paramsDict = dict(parse_qsl(parsedPath.query))
         logging.info('GET parameters received: ' +
                      json.dumps(paramsDict, indent=4, sort_keys=True))
         return paramsDict
@@ -67,9 +68,11 @@ class TaasAppService(BaseHTTPRequestHandler):
         elif '/vehicles/req' in path:
             o = urlparse(path)
             # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type="pet2vet"&order_id=1&customer_id="KG2342"&destination="3001 S. Congress"
-            orderParams = parse_qs(o.query)
+            orderParams = self.extract_GET_parameters()
             print(orderParams)
-            orderCoords = getCoordinates(orderParams['destination'][0])
+            orderCoords = getCoordinates(orderParams['destination'])
+          # orderDispatch = Dispatch(orderParams["service_type"][0], orderParams["order_id"][0], orderCoords)
+           # fleet = Fleet(orderParams["service_type"][0])
             print(orderCoords)
             # hard coding vehicle selection
             # TODO: find available vehicle
