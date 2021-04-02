@@ -10,7 +10,10 @@ class Dispatch:
     def assignVehicle(vehicle_id):
         self.vehicle_id = vehicle_id
 
-    def getRoute():
+    def setRoute(orderRoute):
+        self.route = orderRoute
+    
+    def getCurrentRoute(self):
         return self.route
 
     def getOrderCoordinates():

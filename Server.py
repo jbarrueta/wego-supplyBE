@@ -8,7 +8,8 @@ from urllib.parse import urlparse, parse_qsl
 from classes.fleetManager import FleetManager
 from classes.vehicle import Vehicle
 from controllers.vehicle import registerVehicle
-from controllers.fleetManager import registerUser, loginUser 
+from controllers.fleetManager import registerUser, loginUser
+from controllers.fleet import getAvailableVehicles 
 
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
 # specifying a log file if you want to see a stream of log data in one file.
@@ -70,20 +71,31 @@ class TaasAppService(BaseHTTPRequestHandler):
             # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type="pet2vet"&order_id=1&customer_id="KG2342"&destination="3001 S. Congress"
             orderParams = self.extract_GET_parameters()
             print(orderParams)
+            # get address as coordinates, [long, lat]
             orderCoords = getCoordinates(orderParams['destination'])
-          # orderDispatch = Dispatch(orderParams["service_type"][0], orderParams["order_id"][0], orderCoords)
-           # fleet = Fleet(orderParams["service_type"][0])
-            print(orderCoords)
-            # hard coding vehicle selection
-            # TODO: find available vehicle
-            vehicle = Vehicle(2, "Toyota","KG7283", "available", 1, "pet2vet")
-            # Sending getRoute, the above vehicle location (vehicle is hard coded to St. Edwards Lng, Lat) and destination
-            route = getRoute(-97.757134, 30.2321, orderCoords[0], orderCoords[1])
-            responseBody = {'status': 'OK', 'data':{
-                            'ETA':'10', 
-                            'route': route,
-                            'vehicle_id': vehicle.getID
-            }}
+            # create dispatch object with service type, order id and order coordinates 
+            orderDispatch = Dispatch(orderParams['service_type'], orderParams['order_id'], orderCoords)
+            # use fleet controller to find a list of max 7 available vehicles of that service type
+            avalVehicleObj = getAvailableVehicles('service_type')
+            if avalVehicleObj['status'] != 'OK':
+                responseBody = avalVehicleObj
+            else:
+                fleet = Fleet(orderParams["service_type"], avalVehicleObj['data'])
+                vehicleAssigned = fleet.getClosestVehicle(orderCoords)
+                # set dispatch with closest vehicle
+                dispatch.assignVehicle(vehicleAssigned['id'])
+                # get a route and set route in dispatch class
+                dispatch.setRoute(
+                    getRoute(vehicleAssined['current_location'][0], vehicleAssigned['current_location'][1], 
+                    orderCoords[0], orderCoords[1]))
+                # TODO need a way to find the ETA of something
+                # TODO need to build out repsonse body 
+                #            responseBody = {'status': 'OK', 'data':{
+                #            'ETA':'10', 
+                #            'route': route,
+                #            'vehicle_id': vehicle.getID
+                #            }}
+
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
                         
 
