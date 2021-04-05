@@ -1,5 +1,7 @@
+from utils.mapboxUtils import getRoute
+
 class Fleet: 
-    def __int__(self, service_type, available_vehicles)
+    def __int__(self, service_type, available_vehicles):
         self.service_type = service_type
         self.available_vehicles = available_vehicles
     
@@ -8,5 +10,7 @@ class Fleet:
     def getClosestVehicle(destination):
         return self.available_vehicles[0]
 
-    
+    # This is sending the vehicle with the route for an order
+    # Getting route from mapBox 
     def sendVehicle(vehicleId, route):
+        return 

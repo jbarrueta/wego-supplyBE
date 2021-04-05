@@ -1,6 +1,7 @@
+from utils.mapboxUtils import getRoute
 
 class Dispatch: 
-    def __int__(self, service_type, order_id, order_coords, vehicle_id=None, route=None)
+    def __int__(self, service_type, order_id, order_coords, vehicle_id=None, route=None):
         self.service_type = service_type
         self.order_id = order_id
         self.order_coords = order_coords
