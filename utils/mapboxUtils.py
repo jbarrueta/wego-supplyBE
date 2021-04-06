@@ -14,7 +14,7 @@ def getRoute(startLong, StartLat, endLong, endLat):
 
 ## Given coordinates are The Capital of Austin to St. Edwards University
 ## Should return the coordinates that run along the geoJSON line
-print(getRoute(-97.7431,30.2672,-97.7526,30.2289))
+print("Testing getRoute", getRoute(-97.7431,30.2672,-97.7526,30.2289))
 
 def getGeocoding(startLong, StartLat):
     api_key = "pk.eyJ1Ijoia2F5dGx5bmd1ZXJyZXJvIiwiYSI6ImNrbGd5ejMwMTB5cDQyd29paGZoYnE0dW4ifQ.FN8hXcvlYPaxkl0UdIatVQ"
@@ -23,7 +23,7 @@ def getGeocoding(startLong, StartLat):
     address = json.dumps(mapData.get("features")[0].get('place_name'))
     return address
 ## The coordinates passed is the address of St. Edwards University
-print(getGeocoding(-97.7526,30.2289))
+print("Testing getGeocoding", getGeocoding(-97.7526,30.2289))
 
 # def getETA():
 #     api_key = "pk.eyJ1Ijoia2F5dGx5bmd1ZXJyZXJvIiwiYSI6ImNrbGd5ejMwMTB5cDQyd29paGZoYnE0dW4ifQ.FN8hXcvlYPaxkl0UdIatVQ"
@@ -36,4 +36,4 @@ print(getGeocoding(-97.7526,30.2289))
 def getCoordinates(address):
     destination = geocoder.forward(address).json()['features'][0]["geometry"]["coordinates"]
     return destination
-print(getCoordinates('3001 s congress ave austin tx 78704'))
+print("Testing getCoordinates", getCoordinates('3001 s congress ave austin tx 78704'))

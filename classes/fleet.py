@@ -1,14 +1,19 @@
 from utils.mapboxUtils import getRoute
 
 class Fleet: 
-    def __int__(self, service_type, available_vehicles):
+    def __init__(self, service_type, _id=None):
         self.service_type = service_type
-        self.available_vehicles = available_vehicles
+        self._id = _id
     
-    # Need to use mapbox to find the closest vehicle to destination
-    # hard coded vehicle right now
-    def getClosestVehicle(self, destination):
-        return self.available_vehicles[0]
+    # # Need to use mapbox to find the closest vehicle to destination
+    # # hard coded vehicle right now
+    # def getClosestVehicle(self, destination):
+    #     #logic to find closest vehicle will be here
+    #     closestVehicle = self.available_vehicles[0]
+    #     return closestVehicle
+
+    def setId(self, _id):
+        self._id = _id
 
     # This is sending the vehicle with the route for an order
     # Getting route from mapBox 

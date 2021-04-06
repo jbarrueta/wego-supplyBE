@@ -1,8 +1,10 @@
+from controllers.fleet import getFleetId
 from utils.mapboxUtils import getRoute
 
 class Dispatch: 
     def __init__(self, service_type, order_id, order_coords, vehicle_id=None, route=None):
-        self.service_type = service_type
+        fleet_id = getFleetId(service_type)
+        self.fleet_id = fleet_id
         self.order_id = order_id
         self.order_coords = order_coords
         self.vehicle_id = vehicle_id
@@ -22,3 +24,6 @@ class Dispatch:
 
     def getAssignedVehicle(self):
         return self.vehicle_id
+    
+    def getFleetId(self):
+        return self.fleet_id

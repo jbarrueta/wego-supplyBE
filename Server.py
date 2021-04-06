@@ -1,5 +1,6 @@
 import logging
 import json
+import re
 from utils.mapboxUtils import getCoordinates, getRoute
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -7,9 +8,9 @@ from http import HTTPStatus
 from urllib.parse import urlparse, parse_qsl
 from classes.fleetManager import FleetManager
 from classes.vehicle import Vehicle
-from controllers.vehicle import registerVehicle
+from controllers.vehicle import getAvailableVehicles, getClosestVehicle, registerVehicle
 from controllers.fleetManager import registerUser, loginUser
-from controllers.fleet import getAvailableVehicles 
+from controllers.fleet import registerFleet
 from classes.dispatch import Dispatch
 from classes.fleet import Fleet
 
@@ -67,39 +68,35 @@ class TaasAppService(BaseHTTPRequestHandler):
         if path == '/':
             status = self.HTTP_STATUS_RESPONSE_CODES['OK'].value
             responseBody['data'] = 'Hello world'
-        
+
         elif '/vehicles/req' in path:
-            o = urlparse(path)
-            # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type="pet2vet"&order_id=1&customer_id="KG2342"&destination="3001 S. Congress"
+            # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type=pet2vet&order_id=1&customer_id=KG2342&destination=3001+S.+Congress
             orderParams = self.extract_GET_parameters()
             print(orderParams)
             # get address as coordinates, [long, lat]
             orderCoords = getCoordinates(orderParams['destination'])
-            # create dispatch object with service type, order id and order coordinates 
-            orderDispatch = Dispatch(orderParams['service_type'], orderParams['order_id'], orderCoords)
+            # create dispatch object with service type, order id and order coordinates
+            orderDispatch = Dispatch(
+                orderParams['service_type'], orderParams['order_id'], orderCoords)
+            print(orderDispatch.__dict__)
             # use fleet controller to find a list of max 7 available vehicles of that service type
-            avalVehicleObj = getAvailableVehicles('service_type')
-            if avalVehicleObj['status'] != 'OK':
-                responseBody = avalVehicleObj
-            else:
-                fleet = Fleet(orderParams["service_type"], avalVehicleObj['data'])
-                vehicleAssigned = fleet.getClosestVehicle(orderCoords)
-                # set dispatch with closest vehicle
-                orderDispatch.assignVehicle(vehicleAssigned['id'])
-                # get a route and set route in dispatch class
-                orderDispatch.setRoute(
-                    getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1], 
-                    orderCoords[0], orderCoords[1]))
-                # Need to find a way to get ETA from route
-                responseBody = {'status': 'OK', 'data':{
-                            'ETA':'10', 
-                            'route': orderDispatch.getCurrentRoute(),
-                            'vehicle_id': orderDispatch.getAssignedVehicle()
-                            }}
+            availableVehicles = getAvailableVehicles(
+                orderDispatch.getFleetId())
+            vehicleAssigned = getClosestVehicle(availableVehicles, orderCoords)
+            # set dispatch with closest vehicle
+            orderDispatch.assignVehicle(str(vehicleAssigned['_id']))
+            # get a route and set route in dispatch class
+            orderDispatch.setRoute(
+                getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
+                         orderCoords[0], orderCoords[1]))
+            # Need to find a way to get ETA from route
+            responseBody = {'status': 'OK', 'data': {
+                'ETA': '10',
+                'route': orderDispatch.getCurrentRoute(),
+                'vehicle_id': orderDispatch.getAssignedVehicle()
+            }}
 
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
-                        
-
 
         # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator
         # in Python here to match the string prefix of a URL, which comes in handy when our request URL's have GET
@@ -132,45 +129,30 @@ class TaasAppService(BaseHTTPRequestHandler):
 
         responseBody = {}
         if path == '/registration':
-            # create instance of the FleetManager Class, FleetManager class will validate the information
-
-            # 1. Access POST parameters using your postBody
-            fleetManager = FleetManager(postBody['email'], first_name=postBody['firstName'],
-                                last_name=postBody['lastName'], password=postBody['password'])
-            fleetManagerDict = fleetManager.get_register_data()
-
             # attempting to add user into DB with Controllers.FleetManagerController
-            responseBody = registerUser(fleetManagerDict)
+            responseBody = registerUser(postBody)
 
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
         elif path == '/login':
-            customer = FleetManager(postBody["email"],
-                                password=postBody["password"])
-            email, password = FleetManager.get_login_data()
 
             # attempting to find user credentials with DB with method in Controllers.FleetManagerController
-            responseBody = loginUser(email, password)
+            responseBody = loginUser(postBody)
 
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
-        
-        elif path == '/vehicles/add':
-            vehicleAdd = Vehicle(postBody['fleetID'],
-                                postBody['vehicleModel'],
-                                postBody['licensePlate'],
-                                postBody['vehicleStatus'],
-                                postBody['id'],
-                                postBody['serviceType']
-                                )
-            vehicleDict = vehicleAdd.get_register_data()
-            # attempting to add user into DB with controllers.VehicleController
-            responseBody = registerVehicle(vehicleDict)
-            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
-                    
-         
 
+        elif path == '/fleets':
+
+            responseBody = registerFleet(postBody)
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+
+        # regex string, fleet id must be passed in path
+        elif re.match("^\/[0-9a-fA-F]{24}\/vehicle[\/]?$", path):
+            # attempting to add user into DB with controllers.VehicleController
+            responseBody = registerVehicle(path, postBody)
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
         self.send_response(status)
         self.send_header("Content-type", "text/html")
