@@ -10,6 +10,8 @@ from classes.vehicle import Vehicle
 from controllers.vehicle import registerVehicle
 from controllers.fleetManager import registerUser, loginUser
 from controllers.fleet import getAvailableVehicles 
+from classes.dispatch import Dispatch
+from classes.fleet import Fleet
 
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
 # specifying a log file if you want to see a stream of log data in one file.
@@ -83,18 +85,17 @@ class TaasAppService(BaseHTTPRequestHandler):
                 fleet = Fleet(orderParams["service_type"], avalVehicleObj['data'])
                 vehicleAssigned = fleet.getClosestVehicle(orderCoords)
                 # set dispatch with closest vehicle
-                dispatch.assignVehicle(vehicleAssigned['id'])
+                orderDispatch.assignVehicle(vehicleAssigned['id'])
                 # get a route and set route in dispatch class
-                dispatch.setRoute(
-                    getRoute(vehicleAssined['current_location'][0], vehicleAssigned['current_location'][1], 
+                orderDispatch.setRoute(
+                    getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1], 
                     orderCoords[0], orderCoords[1]))
-                # TODO need a way to find the ETA of something
-                # TODO need to build out repsonse body 
-                #            responseBody = {'status': 'OK', 'data':{
-                #            'ETA':'10', 
-                #            'route': route,
-                #            'vehicle_id': vehicle.getID
-                #            }}
+                # Need to find a way to get ETA from route
+                responseBody = {'status': 'OK', 'data':{
+                            'ETA':'10', 
+                            'route': orderDispatch.getCurrentRoute(),
+                            'vehicle_id': orderDispatch.getAssignedVehicle()
+                            }}
 
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
                         

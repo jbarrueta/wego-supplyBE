@@ -8,7 +8,11 @@ def getAvailableVehicles(service_type):
         db = client.team12_supply
         vehicle = db.vehicle
 
-        availableVehicles = vehicle.find({'status': 'available'}).limit(7)
+        cur = vehicle.find({'status': 'available'}).limit(7)
+        availableVehicles = []
+        for doc in cur:
+            availableVehicles.append(doc)
+        print("This is the list of vehicles")
         logging.debug(availableVehicles)
         if len(availableVehicles) == 0:
             response = {'status': "CONFLICT", 'data' : {'msg': 'There are no available vehicles for this service at this time'}}

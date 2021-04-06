@@ -7,10 +7,9 @@ class Fleet:
     
     # Need to use mapbox to find the closest vehicle to destination
     # hard coded vehicle right now
-    def getClosestVehicle(destination):
+    def getClosestVehicle(self, destination):
         return self.available_vehicles[0]
 
     # This is sending the vehicle with the route for an order
     # Getting route from mapBox 
-    def sendVehicle(vehicleId, route):
-        return 
+ #   def sendVehicle(vehicleId, route): 

@@ -8,11 +8,11 @@ def registerUser(fleetManagerData):
         client = mongoConnect()
         # 3. write data from the database
         db = client.team12_supply #check
-        FleetManager = db.FleetManager
+        fleetManager = db.FleetManager
         if (fleetManager.count_documents({'email': fleetManagerData['email']}) == 0):
             fleetManagerObj = fleetManagerData
             fleetManagerObj['password'] = hashPassword(fleetManagerData['password'])
-            fleetManagerID = FleetManager.insert_one(fleetManagerObj).inserted_id
+            fleetManagerID = fleetManager.insert_one(fleetManagerObj).inserted_id
             response = {'status': 'OK', 'data': {'email': fleetManagerObj['email'], 'fName': fleetManagerObj['first_name'], 'lName': fleetManagerObj['last_name'], "id": fleetManagerID}}
         else:
             response = {'status': 'CONFLICT', 'data': {'msg': 'Email is already registered'}}
