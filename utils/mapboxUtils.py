@@ -26,8 +26,6 @@ def getRoute(startLong, StartLat, endLong, endLat):
     responseCoordinates = json.dumps(mapData.get("routes")[0].get("geometry").get("coordinates"))
     return responseCoordinates
 
-
-
 # Receives 2 sets of coordinates and returns the ETA from point A -> B 
 def getETA(startLong, startLat, endLong, endLat):
     drivingRequest = requests.get("https://api.mapbox.com/directions/v5/mapbox/driving/" +str(startLong)+","+str(startLat)+";"+str(endLong)+","+str(endLat)+ "?geometries=geojson&access_token=" + api_key)
