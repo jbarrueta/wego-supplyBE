@@ -13,6 +13,7 @@ from controllers.fleetManager import registerUser, loginUser
 from controllers.fleet import registerFleet
 from classes.dispatch import Dispatch
 from classes.fleet import Fleet
+from controllers.dispatch import dispatchOrder
 
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
 # specifying a log file if you want to see a stream of log data in one file.
@@ -70,32 +71,8 @@ class TaasAppService(BaseHTTPRequestHandler):
             responseBody['data'] = 'Hello world'
 
         elif '/vehicles/req' in path:
-            # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type=pet2vet&order_id=1&customer_id=KG2342&destination=3001+S.+Congress
-            orderParams = self.extract_GET_parameters()
-            print(orderParams)
-            # get address as coordinates, [long, lat]
-            orderCoords = getCoordinates(orderParams['destination'])
-            # create dispatch object with service type, order id and order coordinates
-            orderDispatch = Dispatch(
-                orderParams['service_type'], orderParams['order_id'], orderCoords)
-            print(orderDispatch.__dict__)
-            # use fleet controller to find a list of max 7 available vehicles of that service type
-            availableVehicles = getAvailableVehicles(
-                orderDispatch.getFleetId())
-            vehicleAssigned = getClosestVehicle(availableVehicles, orderCoords)
-            # set dispatch with closest vehicle
-            orderDispatch.assignVehicle(str(vehicleAssigned['_id']))
-            # get a route and set route in dispatch class
-            orderDispatch.setRoute(
-                getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
-                         orderCoords[0], orderCoords[1]))
-            # Need to find a way to get ETA from route
-            responseBody = {'status': 'OK', 'data': {
-                'ETA': '10',
-                'route': orderDispatch.getCurrentRoute(),
-                'vehicle_id': orderDispatch.getAssignedVehicle()
-            }}
-
+            # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type=pet2vet&order_id=1&customer_id=KG2342&destination=1615+Woodward+St+Austin+Texas+78704
+            responseBody = dispatchOrder(paramsDict)
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
         # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator

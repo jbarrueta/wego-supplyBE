@@ -17,4 +17,6 @@ class Fleet:
 
     # This is sending the vehicle with the route for an order
     # Getting route from mapBox 
+    # TODO change vehicleId status to busy and when done back to available 
  #   def sendVehicle(vehicleId, route): 
+
