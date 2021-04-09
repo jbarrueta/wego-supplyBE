@@ -4,7 +4,8 @@ from classes.dispatch import Dispatch
 from mongo.mongoConfig import mongoConnect
 import logging
 from utils.mapboxUtils import getCoordinates, getRoute
-from controllers.vehicle import getAvailableVehicles, getClosestVehicle
+from controllers.vehicle import getVehicles, getClosestVehicle
+
 
 def dispatchOrder(orderParams):
     print(orderParams)
@@ -15,8 +16,8 @@ def dispatchOrder(orderParams):
         orderParams['service_type'], orderParams['order_id'], orderCoords)
     print(orderDispatch.__dict__)
     # use fleet controller to find a list of max 7 available vehicles of that service type
-    availableVehicles = getAvailableVehicles(
-        orderDispatch.getFleetId())
+    availableVehicles = getVehicles(
+        {"_id": orderDispatch.getFleetId(), 'vehicle_status': 'available'})
     if(len(availableVehicles) != 0):
         vehicleAssigned = getClosestVehicle(
             availableVehicles, orderCoords)
@@ -25,7 +26,7 @@ def dispatchOrder(orderParams):
         print(orderCoords, vehicleAssigned['current_location'])
         # get a route and set route in dispatch class
         orderDispatch.setRoute(getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
-                        orderCoords[0], orderCoords[1]))
+                                        orderCoords[0], orderCoords[1]))
         # Need to find a way to get ETA from route
         responseBody = {'status': 'OK', 'data': {
             'ETA': '10',
@@ -36,4 +37,3 @@ def dispatchOrder(orderParams):
         responseBody = {'status': 'CONFLICT', 'data': {
             'msg': 'No available vehicles at this time!'}}
     return responseBody
-    

@@ -1,6 +1,8 @@
 import logging
 import json
 import re
+
+from bson.objectid import ObjectId
 from utils.mapboxUtils import getCoordinates, getRoute
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -8,9 +10,9 @@ from http import HTTPStatus
 from urllib.parse import urlparse, parse_qsl
 from classes.fleetManager import FleetManager
 from classes.vehicle import Vehicle
-from controllers.vehicle import getAvailableVehicles, getClosestVehicle, registerVehicle
+from controllers.vehicle import getVehicleList, registerVehicle
 from controllers.fleetManager import registerUser, loginUser
-from controllers.fleet import registerFleet
+from controllers.fleet import getFleetList, registerFleet
 from classes.dispatch import Dispatch
 from classes.fleet import Fleet
 from controllers.dispatch import dispatchOrder
@@ -75,12 +77,23 @@ class TaasAppService(BaseHTTPRequestHandler):
             responseBody = dispatchOrder(paramsDict)
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
-        # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator
-        # in Python here to match the string prefix of a URL, which comes in handy when our request URL's have GET
-        # parameters associated with them.
+        elif path == '/fleets':
+            responseBody = getFleetList()
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+            print(responseBody)
 
-        # This will add a response header to the header buffer. Here, we are simply sending back
-        # an HTTP response header with an HTTP status code to the client.
+        elif re.match("^\/[0-9a-fA-F]{24}\/vehicle[\/]?", path):
+            print(paramsDict)
+            paramsDict["fleet_id"] = ObjectId(path.split("/")[1])
+            responseBody = getVehicleList(paramsDict)
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+
+            # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator
+            # in Python here to match the string prefix of a URL, which comes in handy when our request URL's have GET
+            # parameters associated with them.
+
+            # This will add a response header to the header buffer. Here, we are simply sending back
+            # an HTTP response header with an HTTP status code to the client.
         self.send_response(status)
         # This will add a header to the header buffer included in our HTTP response. Here we are specifying
         # the data Content-type of our response from the server to the client.
@@ -89,7 +102,8 @@ class TaasAppService(BaseHTTPRequestHandler):
         # any more headers back to the client after the line below.
         self.end_headers()
         # Convert the Key-value python dictionary into a string which we'll use to respond to this request
-        response = json.dumps(responseBody)
+        response = json.dumps(responseBody, indent=4,
+                              sort_keys=True, default=str)
         logging.info('Response: ' + response)
         # Fill the output stream with our encoded response string which will be returned to the client.
         # The wfile.write() method will only accept bytes data.
