@@ -21,7 +21,7 @@ def registerFleet(postBody):
                 {"service_type": service_type, "fleet_name": fleetObj["fleet_name"]}).inserted_id
             fleetClass.setId(fleet_id)
             response = {"status": "OK", "data": {
-                "service_type": fleetObj["service_type"], "fleet_name": fleetObj["fleet_name"], "fleet_id": fleet_id}}
+                "service_type": fleetObj["service_type"], "fleet_name": fleetObj["fleet_name"], "_id": fleet_id}}
         else:
             response = {"status": "CONFLICT", "data": {
                 "msg": f"Fleet for {service_type} already exists"}}
