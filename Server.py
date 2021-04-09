@@ -1,13 +1,21 @@
 import logging
 import json
+import re
+
+from bson.objectid import ObjectId
 from utils.mapboxUtils import getCoordinates, getRoute
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http import HTTPStatus
-from urllib.parse import urlparse, parse_qs
-from Class.FleetManager import FleetManager
-from Class.Vehicle import Vehicle
-from Controllers.VehicleController import registerVehicle
+from urllib.parse import urlparse, parse_qsl
+from classes.fleetManager import FleetManager
+from classes.vehicle import Vehicle
+from controllers.vehicle import getVehicleList, registerVehicle
+from controllers.fleetManager import registerUser, loginUser
+from controllers.fleet import getFleetList, registerFleet
+from classes.dispatch import Dispatch
+from classes.fleet import Fleet
+from controllers.dispatch import dispatchOrder
 
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
 # specifying a log file if you want to see a stream of log data in one file.
@@ -30,7 +38,7 @@ class TaasAppService(BaseHTTPRequestHandler):
     def extract_GET_parameters(self):
         path = self.path
         parsedPath = urlparse(path)
-        paramsDict = parse_qs(parsedPath.query)
+        paramsDict = dict(parse_qsl(parsedPath.query))
         logging.info('GET parameters received: ' +
                      json.dumps(paramsDict, indent=4, sort_keys=True))
         return paramsDict
@@ -63,34 +71,29 @@ class TaasAppService(BaseHTTPRequestHandler):
         if path == '/':
             status = self.HTTP_STATUS_RESPONSE_CODES['OK'].value
             responseBody['data'] = 'Hello world'
-        
+
         elif '/vehicles/req' in path:
-            o = urlparse(path)
-            # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type="pet2vet"&order_id=1&customer_id="KG2342"&destination="3001 S. Congress"
-            orderParams = parse_qs(o.query)
-            print(orderParams)
-            orderCoords = getCoordinates(orderParams['destination'][0])
-            print(orderCoords)
-            # hard coding vehicle selection
-            # TODO: find available vehicle
-            vehicle = Vehicle(2, "Toyota","KG7283", "available", 1, "pet2vet")
-            # Sending getRoute, the above vehicle location (vehicle is hard coded to St. Edwards Lng, Lat) and destination
-            route = getRoute(-97.757134, 30.2321, orderCoords[0], orderCoords[1])
-            responseBody = {'status': 'OK', 'data':{
-                            'ETA':'10', 
-                            'route': route,
-                            'vehicle_id': vehicle.getID
-            }}
+            # https://supply.team12.sweispring21.tk/api/vehicles/req?service_type=pet2vet&order_id=1&customer_id=KG2342&destination=1615+Woodward+St+Austin+Texas+78704
+            responseBody = dispatchOrder(paramsDict)
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
-                        
 
+        elif path == '/fleets':
+            responseBody = getFleetList()
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+            print(responseBody)
 
-        # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator
-        # in Python here to match the string prefix of a URL, which comes in handy when our request URL's have GET
-        # parameters associated with them.
+        elif re.match("^\/[0-9a-fA-F]{24}\/vehicle[\/]?", path):
+            print(paramsDict)
+            paramsDict["fleet_id"] = ObjectId(path.split("/")[1])
+            responseBody = getVehicleList(paramsDict)
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
-        # This will add a response header to the header buffer. Here, we are simply sending back
-        # an HTTP response header with an HTTP status code to the client.
+            # We can define other GET API endpoints here like so. See that when we can utilize the 'in' operator
+            # in Python here to match the string prefix of a URL, which comes in handy when our request URL's have GET
+            # parameters associated with them.
+
+            # This will add a response header to the header buffer. Here, we are simply sending back
+            # an HTTP response header with an HTTP status code to the client.
         self.send_response(status)
         # This will add a header to the header buffer included in our HTTP response. Here we are specifying
         # the data Content-type of our response from the server to the client.
@@ -99,7 +102,8 @@ class TaasAppService(BaseHTTPRequestHandler):
         # any more headers back to the client after the line below.
         self.end_headers()
         # Convert the Key-value python dictionary into a string which we'll use to respond to this request
-        response = json.dumps(responseBody)
+        response = json.dumps(responseBody, indent=4,
+                              sort_keys=True, default=str)
         logging.info('Response: ' + response)
         # Fill the output stream with our encoded response string which will be returned to the client.
         # The wfile.write() method will only accept bytes data.
@@ -116,45 +120,30 @@ class TaasAppService(BaseHTTPRequestHandler):
 
         responseBody = {}
         if path == '/registration':
-            # create instance of the FleetManager Class, FleetManager class will validate the information
-
-            # 1. Access POST parameters using your postBody
-            fleetManager = FleetManager(postBody['email'], first_name=postBody['firstName'],
-                                last_name=postBody['lastName'], password=postBody['password'])
-            fleetManagerDict = fleetManager.get_register_data()
-
             # attempting to add user into DB with Controllers.FleetManagerController
-            responseBody = registerUser(fleetManagerDict)
+            responseBody = registerUser(postBody)
 
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
         elif path == '/login':
-            customer = FleetManager(postBody["email"],
-                                password=postBody["password"])
-            email, password = FleetManager.get_login_data()
 
             # attempting to find user credentials with DB with method in Controllers.FleetManagerController
-            responseBody = loginUser(email, password)
+            responseBody = loginUser(postBody)
 
             # set status
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
-        
-        elif path == '/vehicles/add':
-            vehicleAdd = Vehicle(postBody['fleetID'],
-                                postBody['vehicleModel'],
-                                postBody['licensePlate'],
-                                postBody['vehicleStatus'],
-                                postBody['id'],
-                                postBody['serviceType']
-                                )
-            vehicleDict = vehicleAdd.get_register_data()
-            # attempting to add user into DB with controllers.VehicleController
-            responseBody = registerVehicle(vehicleDict)
-            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
-                    
-         
 
+        elif path == '/fleets':
+
+            responseBody = registerFleet(postBody)
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+
+        # regex string, fleet id must be passed in path
+        elif re.match("^\/[0-9a-fA-F]{24}\/vehicle[\/]?$", path):
+            # attempting to add user into DB with controllers.VehicleController
+            responseBody = registerVehicle(path, postBody)
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
         self.send_response(status)
         self.send_header("Content-type", "text/html")

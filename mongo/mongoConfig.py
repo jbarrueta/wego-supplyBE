@@ -10,7 +10,7 @@ def mongoConnect():
                              password=config["mongoPassword"], authSource=config["mongoAuthDB"])
 
         # server_info() ensures a connection to the DB is established
-        logging.info(client.server_info())
+        client.server_info()
         return client
     except ServerSelectionTimeoutError:
         logging.error("Could not connect to mongo DB")
