@@ -15,7 +15,10 @@ class Fleet:
     #     return closestVehicle
 
     def setId(self, _id):
-        self._id = _id
+        if _id == "" & _id == None:
+            raise ValueError
+        else:
+            self._id = _id
 
     # This is sending the vehicle with the route for an order
     # Getting route from mapBox

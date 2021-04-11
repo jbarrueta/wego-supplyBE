@@ -2,7 +2,6 @@ from bson.objectid import ObjectId
 from pymongo.errors import PyMongoError
 from classes.fleet import Fleet
 import logging
-
 from pymongo import client_options
 from mongo.mongoConfig import mongoConnect
 
