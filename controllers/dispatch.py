@@ -17,7 +17,7 @@ def dispatchOrder(orderParams):
     print(orderDispatch.__dict__)
     # use fleet controller to find a list of max 7 available vehicles of that service type
     availableVehicles = getVehicles(
-        {"_id": orderDispatch.getFleetId(), 'vehicle_status': 'available'})
+        {"fleet_id": orderDispatch.getFleetId(), 'vehicle_status': 'available'})
     if(len(availableVehicles) != 0):
         vehicleAssigned = getClosestVehicle(
             availableVehicles, orderCoords)
