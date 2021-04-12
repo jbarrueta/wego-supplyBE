@@ -25,6 +25,7 @@ def registerFleet(postBody):
             response = {"status": "CONFLICT", "data": {
                 "msg": f"Fleet for {service_type} already exists"}}
     except Exception as err:
+        print(err)
         response = {"status": "INTERNAL_SERVER_ERROR", "data": {
             "msg": "Server stopped working, please try again later"}}
     return response

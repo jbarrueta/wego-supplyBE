@@ -15,7 +15,7 @@ class Fleet:
     #     return closestVehicle
 
     def setId(self, _id):
-        if _id == "" & _id == None:
+        if _id == "" and _id == None:
             raise ValueError
         else:
             self._id = _id
