@@ -64,7 +64,7 @@ class TaasAppService(BaseHTTPRequestHandler):
         # Extract the GET parameters associated with this HTTP request and store them in a python dictionary
         paramsDict = self.extract_GET_parameters()
         status = self.HTTP_STATUS_RESPONSE_CODES['NOT_FOUND'].value
-        responseBody = {}
+        responseBody = {"data": {"msg": "API endpoint not found"}}
 
         # This is a root URI or block of code that will be executed when client requests the address:
         # http://localhost:8082.
