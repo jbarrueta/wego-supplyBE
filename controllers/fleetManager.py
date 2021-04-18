@@ -6,9 +6,9 @@ import bcrypt
 def registerUser(postBody):
     response = {}
     try:
-        #1. Data validation in FleetManager class
+        # 1. Data validation in FleetManager class
         fleetManager = FleetManager(postBody['email'], first_name=postBody['firstName'],
-                                last_name=postBody['lastName'], password=postBody['password'])
+                                    last_name=postBody['lastName'], password=postBody['password'])
         fleetManagerObj = fleetManager.get_register_data()
         # 2. Open a new database connection
         client = mongoConnect()
@@ -21,13 +21,13 @@ def registerUser(postBody):
             fleetManagerID = fleetManager.insert_one(
                 fleetManagerObj).inserted_id
             response = {'status': 'OK', 'data': {
-                'email': fleetManagerObj['email'], 'fName': fleetManagerObj['first_name'], 'lName': fleetManagerObj['last_name'], "id": fleetManagerID}}
+                'email': fleetManagerObj['email'], 'firstName': fleetManagerObj['first_name'], 'lastName': fleetManagerObj['last_name'], "id": fleetManagerID}}
         else:
             response = {'status': 'CONFLICT', 'data': {
                 'msg': 'Email is already registered'}}
     except ValueError as err:
         response = {'status': 'CONFLICT', 'data': {
-                'msg': err}}
+            'msg': err}}
     except Exception as err:
         response = {'status': 'INTERNAL_SERVER_ERROR', 'data': {
             'msg': 'Server stopped working, please try again later'}}
@@ -41,7 +41,7 @@ def loginUser(postBody):
     response = {}
     try:
         fleetManager = FleetManager(postBody["email"],
-                                password=postBody["password"])
+                                    password=postBody["password"])
         email, password = fleetManager.get_login_data()
         client = mongoConnect()
         db = client.team12_supply
@@ -51,13 +51,13 @@ def loginUser(postBody):
         # checkPassword() will return T/F
         if (user != None and checkPassword(password, user['password'])):
             response = {'status': 'OK', 'data': {
-                'email': user['email'], 'fName': user['first_name'], 'lName': user['last_name'], "id": user["_id"]}}
+                'email': user['email'], 'firstName': user['first_name'], 'lastName': user['last_name'], "id": user["_id"]}}
         else:
             response = {'status': 'CONFLICT', 'data': {
                 'msg': 'Credentials incorrect'}}
     except ValueError as err:
         response = {'status': 'CONFLICT', 'data': {
-                'msg': err}}
+            'msg': err}}
     except Exception as err:
         response = {'status': 'INTERNAL_SERVER_ERROR', 'data': {
             'msg': 'Server stopped working, please try again later'}}

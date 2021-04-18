@@ -8,11 +8,11 @@ import logging
 def registerVehicle(path, postBody):
     response = {}
     try:
-        fleetId = path.split("/")[1]
-        vehicleClass = Vehicle(postBody['vehicleModel'],
-                               postBody['licensePlate'],
-                               postBody['vehicleStatus'],
-                               ObjectId(fleetId)
+        fleet_id = path.split("/")[1]
+        vehicleClass = Vehicle(postBody['vehicle_model'],
+                               postBody['license_plate'],
+                               postBody['vehicle_status'],
+                               ObjectId(fleet_id)
                                )
         vehicleObj = vehicleClass.get_register_data()
         print("here")
@@ -25,7 +25,7 @@ def registerVehicle(path, postBody):
         if (vehicle.count_documents({'license_plate': vehicleObj['license_plate']}) == 0):
             vehicleID = vehicle.insert_one(vehicleObj).inserted_id
             response = {'status': 'OK', 'data': {'fleet_id': vehicleObj['fleet_id'], 'vehicle_model': vehicleObj['vehicle_model'], 'license_plate': vehicleObj[
-                'license_plate'], 'vehicle_status': vehicleObj['vehicle_status'], 'id': vehicleID}}
+                'license_plate'], 'vehicle_status': vehicleObj['vehicle_status'], '_id': vehicleID, "current_location": vehicleObj["current_location"]}}
         else:
             response = {'status': 'CONFLICT',
                         'data': {'msg': 'Vehicle already registered'}}
@@ -39,20 +39,29 @@ def registerVehicle(path, postBody):
     return response
 
 
-def getAvailableVehicles(fleetId):
-    print(fleetId)
+def getVehicleList(paramsDict):
+    try:
+        vehicleList = getVehicles(paramsDict)
+        response = {"status": "OK", "data": {
+            "vehicleList": vehicleList}}
+    except Exception:
+        response = {"status": "INTERNAL_SERVER_ERROR", "data": {
+            "msg": "Server stopped working, please try again later"}}
+    return response
+
+
+def getVehicles(query):
     client = mongoConnect()
     db = client.team12_supply
     vehicle = db.vehicle
-
-    docs = vehicle.find(
-        {'vehicle_status': 'available', 'fleet_id': ObjectId(fleetId)})
-    availableVehicles = []
+    print(query)
+    docs = vehicle.find(query)
+    vehicleList = []
     for doc in docs:
-        availableVehicles.append(doc)
+        vehicleList.append(doc)
     print("This is the list of vehicles")
-    logging.debug(availableVehicles)
-    return availableVehicles
+    logging.debug(vehicleList)
+    return vehicleList
 
 
 def getClosestVehicle(vehicles, coords):
