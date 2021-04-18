@@ -3,8 +3,9 @@ from utils.mapboxUtils import getRoute
 
 
 class Dispatch:
-    def __init__(self, service_type, order_id, order_coords, vehicle_id=None, route=None):
-        fleet_id = getFleetId(service_type)
+    def __init__(self, service_type, order_id, order_coords, vehicle_id=None, route=None, fleet_id=None):
+        if fleet_id == None:
+            fleet_id = getFleetId(service_type)
         self.fleet_id = fleet_id
         self.order_id = order_id
         self.order_coords = order_coords

@@ -6,11 +6,11 @@ import unittest
 class TestDispatch(unittest.TestCase):
     def setUp(self):
         self.dispatch= Dispatch("test2service", "1", "[-97.758911, 30.231760]", "2", 
-                                "[[-97.758917, 30.231775], [-97.758166, 30.232976], [-97.757988,30.232891], [-97.757622, 30.232621], [-97.757501, 30.232374], [-97.757427, 30.23205]]")
+                                "[[-97.758917, 30.231775], [-97.758166, 30.232976], [-97.757988,30.232891], [-97.757622, 30.232621], [-97.757501, 30.232374], [-97.757427, 30.23205]]", "6070a81d27d869d2d83ffeca")
 
 class TestInit(TestDispatch):
     def test_fleet_id(self):
-        self.assertEqual(self.dispatch.fleet_id, "test2service")
+        self.assertEqual(self.dispatch.fleet_id, "6070a81d27d869d2d83ffeca")
     
     def test_order_id(self):
         self.assertEqual(self.dispatch.order_id, "1")
@@ -29,11 +29,12 @@ class TestVehicle(TestDispatch):
         self.assertEqual(self.dispatch.vehicle_id, "2")
 
     def test_getAssignedVehicle(self):
-        self.assertEqual(self.dispatch.getAssignedVehicle, "2")
+        self.assertEqual(self.dispatch.getAssignedVehicle(), "2")
 
 class TestRoute(TestDispatch):
     def test_setRoute(self):
-        self.assertEqual(self.dispatch.route, "[[-97.758917, 30.231775], [-97.758166, 30.232976], [-97.757988,30.232891], [-97.757622, 30.232621], [-97.757501, 30.232374], [-97.757427, 30.23205]]")
+        self.dispatch.setRoute("[[-97.758917, 30.231775], [-97.758166, 30.232976], [-97.757988,30.232891], [-97.757622, 30.232621], [-97.757501, 30.232374]]")
+        self.assertEqual(self.dispatch.route, "[[-97.758917, 30.231775], [-97.758166, 30.232976], [-97.757988,30.232891], [-97.757622, 30.232621], [-97.757501, 30.232374]]")
 
     def test_getCurrentRoute(self):
         self.assertEqual(self.dispatch.route, "[[-97.758917, 30.231775], [-97.758166, 30.232976], [-97.757988,30.232891], [-97.757622, 30.232621], [-97.757501, 30.232374], [-97.757427, 30.23205]]")
@@ -44,7 +45,7 @@ class TestCoordinates(TestDispatch):
 
 class TestFleetId(TestDispatch):
     def test_getFleetId(self):
-        self.assertEqual(self.dispatch.getFleetId, "test2service")
+        self.assertEqual(self.dispatch.getFleetId(), "6070a81d27d869d2d83ffeca")
 
 
 if __name__ == '__main__':

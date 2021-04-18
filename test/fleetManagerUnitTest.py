@@ -1,11 +1,11 @@
 import sys
 sys.path.append("..")
-import classes.fleetManager
+from classes.fleetManager import FleetManager
 import unittest
 
 class TestFleetManager(unittest.TestCase):
     def setUp(self):
-        self.fleetManager = FleetManager("test@test.com", "Testf", "Testl", "testpass")
+        self.fleetManager = FleetManager("test@test.com", "Testf", "Testl", "Testpass123!")
 
 class TestInit(TestFleetManager):
     def test_email(self):
@@ -18,7 +18,7 @@ class TestInit(TestFleetManager):
         self.assertEqual(self.fleetManager.last_name, "Testl")
 
     def test_password(self):
-        self.assertEqual(self.fleetManager.password, "testpass")
+        self.assertEqual(self.fleetManager.password, "Testpass123!")
 
 class TestFirstLastName(TestFleetManager):
     # test get set first name
@@ -47,19 +47,19 @@ class TestEmailPass(TestFleetManager):
         self.assertEqual(self.fleetManager.getEmail(), "new@new.com")
 
     def test_set_pass(self):
-        self.fleetManager.setPassword("newpass")
-        self.assertEqual(self.fleetManager.password, "newpass")
+        self.fleetManager.setPassword("Newpass123!")
+        self.assertEqual(self.fleetManager.password, "Newpass123!")
 
 
-class TestGetRegisterLoginData(TestCustomer):
+class TestGetRegisterLoginData(TestFleetManager):
     def test_get_register_data(self):
         registerData = {'email': "test@test.com", 'first_name': "Testf",
-                        "last_name": "Testl", "password": "testpass"}
+                        "last_name": "Testl", "password": "Testpass123!"}
         self.assertEqual(self.fleetManager.get_register_data(), registerData)
 
     def test_get_login_data(self):
         self.assertEqual(self.fleetManager.get_login_data(),
-                         ("test@test.com", "testpass"))
+                         ("test@test.com", "Testpass123!"))
 
 
 if __name__ == '__main__':

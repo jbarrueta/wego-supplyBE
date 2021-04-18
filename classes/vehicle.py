@@ -9,10 +9,10 @@ class Vehicle:
         self.vehicle_status = vehicle_status.lower()
         self.license_plate = license_plate
         self.vehicle_model = vehicle_model
-        if(validFleet(fleet_id)):
-            self.fleet_id = fleet_id
-        else:
-            raise PyMongoError(f"Fleet with ID: {fleet_id} does not exist")
+        # if(validFleet(fleet_id)):
+        self.fleet_id = fleet_id
+        # else:
+            # raise PyMongoError(f"Fleet with ID: {fleet_id} does not exist")
         # set all vehicle locations to st.edwards university right now
         self.current_location = [-97.758911, 30.231760]
 
