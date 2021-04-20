@@ -15,7 +15,10 @@ class Fleet:
     #     return closestVehicle
 
     def setId(self, _id):
-        self._id = _id
+        if not re.match("/^[0-9a-fA-F]{24}$/", _id):
+            raise ValueError("_id must be type ObjectId")
+        else:
+            self._id = _id
 
     # This is sending the vehicle with the route for an order
     # Getting route from mapBox
