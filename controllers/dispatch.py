@@ -4,7 +4,7 @@ from classes.dispatch import Dispatch
 from mongo.mongoConfig import mongoConnect
 import logging
 from utils.mapboxUtils import getCoordinates, getRoute
-from controllers.vehicle import getVehicles, getClosestVehicle
+from controllers.vehicle import getVehicles, getClosestVehicle, updateVehicleDoc
 
 
 def dispatchOrder(orderParams):
@@ -23,6 +23,7 @@ def dispatchOrder(orderParams):
             availableVehicles, orderCoords)
         # set dispatch with closest vehicle`
         orderDispatch.assignVehicle(str(vehicleAssigned['_id']))
+        updateVehicleDoc(vehicleAssigned['_id'], {"vehicle_status": "busy"})
         print(orderCoords, vehicleAssigned['current_location'])
         # get a route and set route in dispatch class
         orderDispatch.setRoute(getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
