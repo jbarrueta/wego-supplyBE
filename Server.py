@@ -16,7 +16,7 @@ from controllers.fleet import getFleetList, registerFleet
 from classes.dispatch import Dispatch
 from classes.fleet import Fleet
 from controllers.dispatch import dispatchOrder
-
+from config.config import config
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
 # specifying a log file if you want to see a stream of log data in one file.
 logging.basicConfig(level=logging.DEBUG)
@@ -173,9 +173,10 @@ if __name__ == '__main__':
     # Ports are part of a socket connection made between a server and a client. Ports 0-1023 are
     # reserved for common TCP/IP applications and shouldn't be used here. Communicate with your
     # DevOps member to find out which port you should be running your application off of.
-    serverPort = 8081
-    appServer = HTTPServer((hostName, serverPort), TaasAppService)
-    logging.info('Server started http://%s:%s' % (hostName, serverPort))
+
+    appServer = HTTPServer((hostName, config['serverPort']), TaasAppService)
+    logging.info('Server started http://%s:%s' %
+                 (hostName, config['serverPort']))
 
     # Start the server and fork it. Use 'Ctrl + c' command to kill this process when running it in the foreground
     # on your terminal.

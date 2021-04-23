@@ -6,5 +6,6 @@ config = {
     "mongoUser": "",
     "mongoPassword": "",
     "mongoHost": "localhost",
-    "mongoAuthDB": ""
+    "mongoAuthDB": "",
+    "serverPort": 8082
 }
