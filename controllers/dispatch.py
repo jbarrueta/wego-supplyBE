@@ -3,8 +3,9 @@ from pymongo.errors import PyMongoError
 from classes.dispatch import Dispatch
 from mongo.mongoConfig import mongoConnect
 import logging
-from utils.mapboxUtils import getCoordinates, getRoute
-from controllers.vehicle import getVehicles, getClosestVehicle
+from utils.mapboxUtils import getCoordinates, getETA, getRoute
+from controllers.vehicle import getVehicles, getClosestVehicle, updateVehicleDoc
+import datetime
 
 
 def dispatchOrder(orderParams):
@@ -23,13 +24,20 @@ def dispatchOrder(orderParams):
             availableVehicles, orderCoords)
         # set dispatch with closest vehicle`
         orderDispatch.assignVehicle(str(vehicleAssigned['_id']))
+        updateVehicleDoc(vehicleAssigned['_id'], {"vehicle_status": "busy"})
         print(orderCoords, vehicleAssigned['current_location'])
         # get a route and set route in dispatch class
         orderDispatch.setRoute(getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
                                         orderCoords[0], orderCoords[1]))
+        eta = getETA(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
+                     orderCoords[0], orderCoords[1])
+        print(eta)
+        now = datetime.datetime.now()
+        eta = now + datetime.timedelta(minutes=eta)
+        print("new", eta)
         # Need to find a way to get ETA from route
         responseBody = {'status': 'OK', 'data': {
-            'ETA': '10',
+            'ETA': eta.strftime('%Y-%m-%dT%H:%M:%S'),
             'route': orderDispatch.getCurrentRoute(),
             'vehicle_id': orderDispatch.getAssignedVehicle()
         }}

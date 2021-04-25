@@ -16,8 +16,10 @@ class Dispatch:
         #     raise ValueError("order_coords is not the correct length")
         # else:
         self.order_coords = order_coords
-        self.vehicle_id = vehicle_id
-        self.route = route
+        if vehicle_id != None:
+            self.vehicle_id = vehicle_id
+        if route != None:
+            self.route = route
 
     def assignVehicle(self, vehicle_id):
         if not re.match("/^[0-9a-fA-F]{24}$/", vehicle_id):

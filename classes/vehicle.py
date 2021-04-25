@@ -36,3 +36,15 @@ class Vehicle:
 
     def get_register_data(self):
         return self.__dict__
+
+    def setVehicleStatus(self, status):
+        if(status in ["available", "busy", "inactive", "maintenance"]):
+            self.vehicle_status = status
+        else:
+            raise ValueError("Status sent is not a valid vehicle status")
+
+    def setCurrentLocation(self, coordinatePoints):
+        if(isinstance(coordinatePoints, list) and len(coordinatePoints) == 2):
+            self.current_location = coordinatePoints
+        else:
+            raise ValueError("Location sent is not a valid location")

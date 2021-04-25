@@ -34,6 +34,6 @@ def getETA(startLong, startLat, endLong, endLat):
     # 1 mile = 1609.34 meters (distance is given in meters from mapbox)
     eta = ((distance/1609.34)/50)*60
     # Only grab 2 places after decimal
-    return "ETA: "+ "%.2f" % eta + " minutes"
+    return eta
 # print(getETA(-97.7431,30.2672,-97.7526,30.2289))
 
