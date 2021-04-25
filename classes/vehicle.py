@@ -1,6 +1,5 @@
 # Vehicle class object
 from controllers.fleet import validFleet
-from pymongo.errors import PyMongoError
 import re
 
 
