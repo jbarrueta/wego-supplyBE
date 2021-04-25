@@ -12,7 +12,7 @@ class Dispatch:
         else:
             self.fleet_id = fleet_id
         if not re.match("^[0-9a-fA-F]{24}$", order_id):
-            raise ValueError("fleet_id must be type ObjectId")
+            raise ValueError("order_id must be type ObjectId")
         else:
             self.order_id = order_id
         self.order_coords = order_coords
