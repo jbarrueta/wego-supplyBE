@@ -3,12 +3,15 @@ from pymongo.errors import PyMongoError
 from classes.vehicle import Vehicle
 from mongo.mongoConfig import mongoConnect
 import logging
+from controllers.fleet import validFleet
 
 
 def registerVehicle(path, postBody):
     response = {}
     try:
         fleet_id = path.split("/")[1]
+        if not(validFleet(fleet_id)):
+            raise PyMongoError(f"Fleet with ID: {fleet_id} does not exist")
         vehicleClass = Vehicle(postBody['vehicle_model'],
                                postBody['license_plate'],
                                postBody['vehicle_status'],

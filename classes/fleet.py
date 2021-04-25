@@ -16,7 +16,7 @@ class Fleet:
     #     return closestVehicle
 
     def setId(self, _id):
-        if not re.match("/^[0-9a-fA-F]{24}$/", _id):
+        if not re.match("^[0-9a-fA-F]{24}$", _id):
             raise ValueError("_id must be type ObjectId")
         else:
             self._id = _id
