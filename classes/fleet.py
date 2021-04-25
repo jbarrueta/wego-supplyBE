@@ -1,7 +1,7 @@
 from utils.mapboxUtils import getRoute
 import re
 
-
+# For this class fleet will have service_type, the fleet name, and its id 
 class Fleet:
     def __init__(self, service_type, fleet_name, _id=None):
         self.service_type = service_type
