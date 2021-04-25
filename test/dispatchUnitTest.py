@@ -27,6 +27,8 @@ class TestInit(TestDispatch):
 class TestVehicle(TestDispatch):
     def test_assignVehicle(self):
         self.assertEqual(self.dispatch.vehicle_id, "2")
+        self.assertRaises(ValueError, self.dispatch.assignVehicle, " ")
+        self.assertRaises(ValueError, self.dispatch.assignVehicle, "test124")
 
     def test_getAssignedVehicle(self):
         self.assertEqual(self.dispatch.getAssignedVehicle(), "2")
@@ -40,6 +42,13 @@ class TestRoute(TestDispatch):
         self.assertEqual(self.dispatch.route, "[[-97.758917, 30.231775], [-97.758166, 30.232976], [-97.757988,30.232891], [-97.757622, 30.232621], [-97.757501, 30.232374], [-97.757427, 30.23205]]")
 
 class TestCoordinates(TestDispatch):
+    def test_setOrderCoords(self):
+        self.dispatch.setOrderCoords("[-97.758911, 30.231760]")
+        self.assertEqual(self.dispatch.order_coords, "[-97.758911, 30.231760]")
+        self.assertRaises(ValueError, self.dispatch.setOrderCoords, "[]")
+        self.assertRaises(ValueError, self.dispatch.setOrderCoords, "testCoords")
+        self.assertRaises(ValueError, self.dispatch.setOrderCoords, "")
+
     def test_getOrderCoordinates(self):
         self.assertEqual(self.dispatch.order_coords, "[-97.758911, 30.231760]")
 

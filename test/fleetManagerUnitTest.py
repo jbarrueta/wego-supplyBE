@@ -28,6 +28,8 @@ class TestFirstLastName(TestFleetManager):
     def test_set_first_name(self):
         self.fleetManager.setFirstName("newfirstName")
         self.assertEqual(self.fleetManager.getFirstName(), "newfirstName")
+        self.assertRaises(ValueError, self.fleetManager.setFirstName, "incorrectFirstName1")
+        self.assertRaises(ValueError, self.fleetManager.setFirstName, "")
 
     # test get set last name
     def test_get_last_name(self):
@@ -36,6 +38,8 @@ class TestFirstLastName(TestFleetManager):
     def test_set_last_name(self):
         self.fleetManager.setLastName("newlastName")
         self.assertEqual(self.fleetManager.getLastName(), "newlastName")
+        self.assertRaises(ValueError, self.fleetManager.setLastName, "incorrectLastName2")
+        self.assertRaises(ValueError, self.fleetManager.setLastName, " ")
 
 
 class TestEmailPass(TestFleetManager):
@@ -45,10 +49,15 @@ class TestEmailPass(TestFleetManager):
     def test_set_email(self):
         self.fleetManager.setEmail("new@new.com")
         self.assertEqual(self.fleetManager.getEmail(), "new@new.com")
+        self.assertRaises(ValueError, self.fleetManager.setEmail, "incorrectEmail.com")
+        self.assertRaises(ValueError, self.fleetManager.setEmail, " ")
 
     def test_set_pass(self):
         self.fleetManager.setPassword("Newpass123!")
         self.assertEqual(self.fleetManager.password, "Newpass123!")
+        self.assertRaises(ValueError, self.fleetManager.setPassword, "incorrectpassword")
+        self.assertRaises(ValueError, self.fleetManager.setPassword, "1245")
+        self.assertRaises(ValueError, self.fleetManager.setPassword, "")
 
 
 class TestGetRegisterLoginData(TestFleetManager):

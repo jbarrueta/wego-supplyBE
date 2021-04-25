@@ -16,9 +16,11 @@ class TestInit(TestVehicle):
 
     def test_vehicle_model(self):
         self.assertEqual(self.vehicle.vehicle_model, "testmodel")
+        #self.assertRaises(ValueError, self.vehicle.vehicle_model, " ")
 
     def test_fleet_id(self):
         self.assertEqual(self.vehicle.fleet_id, "6070a81d27d869d2d83ffeca")
+
 
 class TestVehicle(TestVehicle):
     def test_getVehicleStatus(self):
@@ -26,6 +28,7 @@ class TestVehicle(TestVehicle):
 
     def test_getLicensePlate(self):
         self.assertEqual(self.vehicle.getLicensePlate(), "588TST")
+        #self.assertRaises(ValueError, self.vehicle.getLicensePlate(), " ")
 
     def test_getVehicleModel(self):
         self.assertEqual(self.vehicle.getVehicleModel(), "testmodel")
