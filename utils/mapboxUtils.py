@@ -1,12 +1,13 @@
 import requests
 import json
 from mapbox import Geocoder
+from config.config import config
 
-api_key = "pk.eyJ1Ijoia2F5dGx5bmd1ZXJyZXJvIiwiYSI6ImNrbGd5ejMwMTB5cDQyd29paGZoYnE0dW4ifQ.FN8hXcvlYPaxkl0UdIatVQ"
+api_key = config["accessTokenMB"]
 # Receives an address, returns the coordinates
 def getCoordinates(address):
     geocoder = Geocoder()
-    geocoder = Geocoder(access_token="pk.eyJ1Ijoia2F5dGx5bmd1ZXJyZXJvIiwiYSI6ImNrbGd5ejMwMTB5cDQyd29paGZoYnE0dW4ifQ.FN8hXcvlYPaxkl0UdIatVQ")
+    geocoder = Geocoder(access_token=api_key)
     destination = geocoder.forward(address).json()['features'][0]["geometry"]["coordinates"]
     return destination
 
@@ -34,6 +35,5 @@ def getETA(startLong, startLat, endLong, endLat):
     # 1 mile = 1609.34 meters (distance is given in meters from mapbox)
     eta = ((distance/1609.34)/50)*60
     # Only grab 2 places after decimal
-    return "ETA: "+ "%.2f" % eta + " minutes"
-# print(getETA(-97.7431,30.2672,-97.7526,30.2289))
+    return eta
 

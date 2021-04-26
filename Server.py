@@ -10,13 +10,13 @@ from http import HTTPStatus
 from urllib.parse import urlparse, parse_qsl
 from classes.fleetManager import FleetManager
 from classes.vehicle import Vehicle
-from controllers.vehicle import getVehicleList, registerVehicle
+from controllers.vehicle import getVehicleList, registerVehicle, updateVehicle
 from controllers.fleetManager import registerUser, loginUser
 from controllers.fleet import getFleetList, registerFleet
 from classes.dispatch import Dispatch
 from classes.fleet import Fleet
 from controllers.dispatch import dispatchOrder
-
+from config.config import config
 # Class Logger we can use for debugging our Python service. You can add an additional parameter here for
 # specifying a log file if you want to see a stream of log data in one file.
 logging.basicConfig(level=logging.DEBUG)
@@ -48,6 +48,7 @@ class TaasAppService(BaseHTTPRequestHandler):
         # read the data using an IO input buffer stream built into the http.server module.
         postBodyLength = int(self.headers['content-length'])
         postBodyString = self.rfile.read(postBodyLength)
+        print(postBodyString)
         # loads string into dict
         postBodyDict = json.loads(postBodyString)
         # exclude logging sensitive info
@@ -64,7 +65,7 @@ class TaasAppService(BaseHTTPRequestHandler):
         # Extract the GET parameters associated with this HTTP request and store them in a python dictionary
         paramsDict = self.extract_GET_parameters()
         status = self.HTTP_STATUS_RESPONSE_CODES['NOT_FOUND'].value
-        responseBody = {}
+        responseBody = {"data": {"msg": "API endpoint not found"}}
 
         # This is a root URI or block of code that will be executed when client requests the address:
         # http://localhost:8082.
@@ -145,6 +146,12 @@ class TaasAppService(BaseHTTPRequestHandler):
             responseBody = registerVehicle(path, postBody)
             status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
 
+        # regex string, vehicle id must be passed in path
+        elif re.match("/vehicle\/update[\/]?$", path):
+            # attempting to update a vehicle
+            responseBody = updateVehicle(postBody)
+            status = self.HTTP_STATUS_RESPONSE_CODES[responseBody["status"]].value
+
         self.send_response(status)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -166,9 +173,10 @@ if __name__ == '__main__':
     # Ports are part of a socket connection made between a server and a client. Ports 0-1023 are
     # reserved for common TCP/IP applications and shouldn't be used here. Communicate with your
     # DevOps member to find out which port you should be running your application off of.
-    serverPort = 8082
-    appServer = HTTPServer((hostName, serverPort), TaasAppService)
-    logging.info('Server started http://%s:%s' % (hostName, serverPort))
+
+    appServer = HTTPServer((hostName, config['serverPort']), TaasAppService)
+    logging.info('Server started http://%s:%s' %
+                 (hostName, config['serverPort']))
 
     # Start the server and fork it. Use 'Ctrl + c' command to kill this process when running it in the foreground
     # on your terminal.

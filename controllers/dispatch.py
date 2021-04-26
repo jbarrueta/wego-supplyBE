@@ -3,18 +3,17 @@ from pymongo.errors import PyMongoError
 from classes.dispatch import Dispatch
 from mongo.mongoConfig import mongoConnect
 import logging
-from utils.mapboxUtils import getCoordinates, getRoute
-from controllers.vehicle import getVehicles, getClosestVehicle
+from utils.mapboxUtils import getCoordinates, getETA, getRoute
+from controllers.vehicle import getVehicles, getClosestVehicle, updateVehicleDoc
+import datetime
 
 
 def dispatchOrder(orderParams):
-    print(orderParams)
     # get address as coordinates, [long, lat]
     orderCoords = getCoordinates(orderParams['destination'])
     # create dispatch object with service type, order id and order coordinates
     orderDispatch = Dispatch(
         orderParams['service_type'], orderParams['order_id'], orderCoords)
-    print(orderDispatch.__dict__)
     # use fleet controller to find a list of max 7 available vehicles of that service type
     availableVehicles = getVehicles(
         {"fleet_id": orderDispatch.getFleetId(), 'vehicle_status': 'available'})
@@ -23,13 +22,17 @@ def dispatchOrder(orderParams):
             availableVehicles, orderCoords)
         # set dispatch with closest vehicle`
         orderDispatch.assignVehicle(str(vehicleAssigned['_id']))
-        print(orderCoords, vehicleAssigned['current_location'])
+        updateVehicleDoc(vehicleAssigned['_id'], {"vehicle_status": "busy"})
         # get a route and set route in dispatch class
         orderDispatch.setRoute(getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
                                         orderCoords[0], orderCoords[1]))
+        eta = getETA(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
+                     orderCoords[0], orderCoords[1])
+        now = datetime.datetime.now()
+        eta = now + datetime.timedelta(minutes=eta)
         # Need to find a way to get ETA from route
         responseBody = {'status': 'OK', 'data': {
-            'ETA': '10',
+            'ETA': eta.strftime('%Y-%m-%dT%H:%M:%S'),
             'route': orderDispatch.getCurrentRoute(),
             'vehicle_id': orderDispatch.getAssignedVehicle()
         }}
