@@ -8,4 +8,5 @@ config = {
     "mongoHost": "localhost",
     "mongoAuthDB": "",
     "serverPort": 8082
+    "accessTokenMB": "NEED TO FILL"
 }

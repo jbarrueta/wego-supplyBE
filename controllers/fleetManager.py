@@ -35,8 +35,6 @@ def registerUser(postBody):
 
 # Pre: takes email and password
 # Post: Returns obj with email, first name, last name, userid
-
-
 def loginUser(postBody):
     response = {}
     try:
@@ -47,7 +45,6 @@ def loginUser(postBody):
         db = client.team12_supply
         fleetManager = db.fleetManager
         user = fleetManager.find_one({'email': email})
-        print(user)
         # checkPassword() will return T/F
         if (user != None and checkPassword(password, user['password'])):
             response = {'status': 'OK', 'data': {

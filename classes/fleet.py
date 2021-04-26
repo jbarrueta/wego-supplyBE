@@ -16,6 +16,7 @@ class Fleet:
     #     closestVehicle = self.available_vehicles[0]
     #     return closestVehicle
 
+    # sets id if it is an instance
     def setId(self, _id):
         if not isinstance(_id, ObjectId):
             raise ValueError("_id must be type ObjectId")
@@ -24,5 +25,4 @@ class Fleet:
 
     # This is sending the vehicle with the route for an order
     # Getting route from mapBox
-    # TODO change vehicleId status to busy and when done back to available
  #   def sendVehicle(vehicleId, route):

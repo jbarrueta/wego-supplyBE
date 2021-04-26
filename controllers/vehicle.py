@@ -18,7 +18,6 @@ def registerVehicle(path, postBody):
                                ObjectId(fleet_id)
                                )
         vehicleObj = vehicleClass.get_register_data()
-        print(vehicleObj)
         # 2. Open a new database connection
         client = mongoConnect()
         # 3. write data from the database
