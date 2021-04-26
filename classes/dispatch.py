@@ -17,7 +17,7 @@ class Dispatch:
 
     # assigns vehicle to order and validation for vehicle_id
     def assignVehicle(self, vehicle_id):
-        if not re.match("/^[0-9a-fA-F]{24}$/", vehicle_id):
+        if not re.match("^[0-9a-fA-F]{24}$", vehicle_id):
             raise ValueError("vehicle_id must be type ObjectId")
         else:
             self.vehicle_id = vehicle_id

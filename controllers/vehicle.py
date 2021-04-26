@@ -10,7 +10,7 @@ def registerVehicle(path, postBody):
     response = {}
     try:
         fleet_id = path.split("/")[1]
-        if not(validFleet(fleet_id)):
+        if not(validFleet(ObjectId(fleet_id))):
             raise PyMongoError(f"Fleet with ID: {fleet_id} does not exist")
         vehicleClass = Vehicle(postBody['vehicle_model'],
                                postBody['license_plate'],
@@ -18,7 +18,6 @@ def registerVehicle(path, postBody):
                                ObjectId(fleet_id)
                                )
         vehicleObj = vehicleClass.get_register_data()
-        print("here")
         print(vehicleObj)
         # 2. Open a new database connection
         client = mongoConnect()
@@ -33,6 +32,9 @@ def registerVehicle(path, postBody):
             response = {'status': 'CONFLICT',
                         'data': {'msg': 'Vehicle already registered'}}
     except PyMongoError as err:
+        response = {'status': 'CONFLICT', 'data': {
+            'msg': err}}
+    except ValueError as err:
         response = {'status': 'CONFLICT', 'data': {
             'msg': err}}
     except Exception as err:

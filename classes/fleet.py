@@ -1,4 +1,5 @@
 from utils.mapboxUtils import getRoute
+from bson.objectid import ObjectId
 import re
 
 # For this class fleet will have service_type, the fleet name, and its id 
@@ -16,7 +17,7 @@ class Fleet:
     #     return closestVehicle
 
     def setId(self, _id):
-        if not re.match("^[0-9a-fA-F]{24}$", _id):
+        if not isinstance(_id, ObjectId):
             raise ValueError("_id must be type ObjectId")
         else:
             self._id = _id

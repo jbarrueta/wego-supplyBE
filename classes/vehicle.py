@@ -1,14 +1,15 @@
 # Vehicle class object
 from controllers.fleet import validFleet
+from bson.objectid import ObjectId
 import re
 
 
 class Vehicle:
     def __init__(self, vehicle_model, license_plate, vehicle_status, fleet_id):
-        self.vehicle_status = vehicle_status.lower()
-        self.license_plate = license_plate
-        self.vehicle_model = vehicle_model
-        self.fleet_id = fleet_id
+        self.setVehicleStatus(vehicle_status.lower())
+        self.setLicensePlate(license_plate)
+        self.setVehicleModel(vehicle_model)
+        self.setFleetId(fleet_id)
         # set all vehicle locations to st.edwards university right now
         self.current_location = [-97.758911, 30.231760]
 
@@ -35,7 +36,7 @@ class Vehicle:
     
     def setLicensePlate(self, license_plate):
         if not re.match("^[A-Z0-9]+$", license_plate):
-            raise ValueError("license_plate is not correct")
+            raise ValueError("license plate is not correct")
         else:
             self.license_plate = license_plate
     
@@ -46,7 +47,7 @@ class Vehicle:
             raise ValueError("vehicle_model can only have letters")
     
     def setFleetId(self, fleet_id):
-        if not re.match("^[0-9a-fA-F]{24}$", fleet_id):
+        if not isinstance(fleet_id, ObjectId):
             raise ValueError("fleet_id must be type ObjectId")
         else:
             self.fleet_id = fleet_id
