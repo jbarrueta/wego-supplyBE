@@ -3,19 +3,21 @@ from pymongo.errors import PyMongoError
 from classes.vehicle import Vehicle
 from mongo.mongoConfig import mongoConnect
 import logging
+from controllers.fleet import validFleet
 
 
 def registerVehicle(path, postBody):
     response = {}
     try:
         fleet_id = path.split("/")[1]
+        if not(validFleet(ObjectId(fleet_id))):
+            raise PyMongoError(f"Fleet with ID: {fleet_id} does not exist")
         vehicleClass = Vehicle(postBody['vehicle_model'],
                                postBody['license_plate'],
                                postBody['vehicle_status'],
                                ObjectId(fleet_id)
                                )
         vehicleObj = vehicleClass.get_register_data()
-        print("here")
         print(vehicleObj)
         # 2. Open a new database connection
         client = mongoConnect()
@@ -30,6 +32,9 @@ def registerVehicle(path, postBody):
             response = {'status': 'CONFLICT',
                         'data': {'msg': 'Vehicle already registered'}}
     except PyMongoError as err:
+        response = {'status': 'CONFLICT', 'data': {
+            'msg': err}}
+    except ValueError as err:
         response = {'status': 'CONFLICT', 'data': {
             'msg': err}}
     except Exception as err:

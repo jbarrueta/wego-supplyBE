@@ -13,6 +13,7 @@ pipelines:
           - pip
         script:
           - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          - cp config/configTemplate.py config/config.py
           - cd test
           - python -m unittest discover -p "*Test*.py" -v
 
