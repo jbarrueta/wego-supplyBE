@@ -1,11 +1,12 @@
 import sys
 sys.path.append("..")
 from classes.vehicle import Vehicle
+from bson.objectid import ObjectId
 import unittest
 
 class TestVehicle(unittest.TestCase):
     def setUp(self):
-        self.vehicle = Vehicle("testmodel", "588TST", "available", "6070a81d27d869d2d83ffeca")
+        self.vehicle = Vehicle("testmodel", "588TST", "available", ObjectId("6070a81d27d869d2d83ffeca"))
 
 class TestInit(TestVehicle):
     def test_vehicleStatus(self):
@@ -19,7 +20,7 @@ class TestInit(TestVehicle):
         #self.assertRaises(ValueError, self.vehicle.vehicle_model, " ")
 
     def test_fleet_id(self):
-        self.assertEqual(self.vehicle.fleet_id, "6070a81d27d869d2d83ffeca")
+        self.assertEqual(self.vehicle.fleet_id, ObjectId("6070a81d27d869d2d83ffeca"))
 
 
 class TestVehicleStatus(TestVehicle):
@@ -75,14 +76,14 @@ class TestIdService(TestVehicle):
     #     self.assertEqual(self.vehicle.getID(), "7070a81d27d869d2d83ffecb")
 
     def test_setFleetId(self):
-        self.vehicle.setFleetId("6070a81d27d869d2d83ffeca")
-        self.assertEqual(self.vehicle.fleet_id, "6070a81d27d869d2d83ffeca")
+        self.vehicle.setFleetId(ObjectId("6070a81d27d869d2d83ffeca"))
+        self.assertEqual(self.vehicle.fleet_id, ObjectId("6070a81d27d869d2d83ffeca"))
         self.assertRaises(ValueError, self.vehicle.setFleetId, " ")
         self.assertRaises(ValueError, self.vehicle.setFleetId, "1")
         self.assertRaises(ValueError, self.vehicle.setFleetId, "testFleetId")
     
     def test_getFleetID(self):
-        self.assertEqual(self.vehicle.getFleetID(), "6070a81d27d869d2d83ffeca")
+        self.assertEqual(self.vehicle.getFleetID(), ObjectId("6070a81d27d869d2d83ffeca"))
 
 class TestCoordinates(TestVehicle):
     def test_setCurrentLocation(self):
@@ -98,7 +99,7 @@ class TestGetRegisterData(TestVehicle):
         registerData = {"vehicle_model": "testmodel",
                         "license_plate": "588TST",
                         "vehicle_status": "available",
-                        "fleet_id": "6070a81d27d869d2d83ffeca",
+                        "fleet_id": ObjectId("6070a81d27d869d2d83ffeca"),
                         'current_location': [-97.758911, 30.23176]}
         self.assertEqual(self.vehicle.get_register_data(), registerData)
 

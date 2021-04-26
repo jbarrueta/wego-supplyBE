@@ -1,6 +1,7 @@
 import sys
 sys.path.append("..")
 from classes.fleet import Fleet
+from bson.objectid import ObjectId
 import unittest
 
 class TestFleet(unittest.TestCase):
@@ -15,8 +16,8 @@ class TestInit(TestFleet):
 # test for the method setId
 class TestSetId(TestFleet):
     def test_setId(self):
-        self.fleet.setId("6070a81d27d869d2d83ffeca")
-        self.assertEqual(self.fleet._id, "6070a81d27d869d2d83ffeca")
+        self.fleet.setId(ObjectId("6070a81d27d869d2d83ffeca"))
+        self.assertEqual(self.fleet._id, ObjectId("6070a81d27d869d2d83ffeca"))
         self.assertRaises(ValueError, self.fleet.setId, " ")
         self.assertRaises(ValueError, self.fleet.setId, "1")
         self.assertRaises(ValueError, self.fleet.setId, "testId")
