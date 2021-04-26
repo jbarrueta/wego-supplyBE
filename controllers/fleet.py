@@ -19,14 +19,12 @@ def registerFleet(postBody):
             fleet_id = fleet.insert_one(
                 {"service_type": service_type, "fleet_name": fleetObj["fleet_name"]}).inserted_id
             fleetClass.setId(fleet_id)
-            print("here")
             response = {"status": "OK", "data": {
                 "service_type": fleetObj["service_type"], "fleet_name": fleetObj["fleet_name"], "_id": fleet_id}}
         else:
             response = {"status": "CONFLICT", "data": {
                 "msg": f"Fleet for {service_type} already exists"}}
     except Exception as err:
-        print(err)
         response = {"status": "INTERNAL_SERVER_ERROR", "data": {
             "msg": "Server stopped working, please try again later"}}
     return response

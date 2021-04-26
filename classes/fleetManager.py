@@ -1,4 +1,4 @@
-# # FleetManager class
+# FleetManager class
 import re
 
 

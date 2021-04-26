@@ -9,13 +9,11 @@ import datetime
 
 
 def dispatchOrder(orderParams):
-    print(orderParams)
     # get address as coordinates, [long, lat]
     orderCoords = getCoordinates(orderParams['destination'])
     # create dispatch object with service type, order id and order coordinates
     orderDispatch = Dispatch(
         orderParams['service_type'], orderParams['order_id'], orderCoords)
-    print(orderDispatch.__dict__)
     # use fleet controller to find a list of max 7 available vehicles of that service type
     availableVehicles = getVehicles(
         {"fleet_id": orderDispatch.getFleetId(), 'vehicle_status': 'available'})
@@ -25,16 +23,13 @@ def dispatchOrder(orderParams):
         # set dispatch with closest vehicle`
         orderDispatch.assignVehicle(str(vehicleAssigned['_id']))
         updateVehicleDoc(vehicleAssigned['_id'], {"vehicle_status": "busy"})
-        print(orderCoords, vehicleAssigned['current_location'])
         # get a route and set route in dispatch class
         orderDispatch.setRoute(getRoute(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
                                         orderCoords[0], orderCoords[1]))
         eta = getETA(vehicleAssigned['current_location'][0], vehicleAssigned['current_location'][1],
                      orderCoords[0], orderCoords[1])
-        print(eta)
         now = datetime.datetime.now()
         eta = now + datetime.timedelta(minutes=eta)
-        print("new", eta)
         # Need to find a way to get ETA from route
         responseBody = {'status': 'OK', 'data': {
             'ETA': eta.strftime('%Y-%m-%dT%H:%M:%S'),
